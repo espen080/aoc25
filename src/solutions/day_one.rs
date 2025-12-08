@@ -81,8 +81,7 @@ fn parse_line(line: &str) -> Rotation {
 }
 
 pub fn solution() {
-    let input_file = Path::new("input/day1.txt");
-    let input = parse_input(input_file).expect("failed to parse input");
+    let input = parse_input("input/day1.txt").expect("failed to parse input");
 
     let mut lock = Lock::new();
 
