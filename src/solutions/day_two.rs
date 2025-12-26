@@ -1,8 +1,8 @@
+use core::str;
+
 use crate::utils::parse_input;
 
 struct Range {
-    start: String,
-    end: String,
     min: u64,
     max: u64,
 }
@@ -10,8 +10,6 @@ struct Range {
 impl Range {
     fn new(start: &str, end: &str) -> Self {
         Range {
-            start: String::from(start),
-            end: String::from(end),
             min: start.parse().unwrap(),
             max: end.parse().unwrap(),
         }
@@ -24,7 +22,7 @@ impl Range {
          * 123123 (123 twice) would all be invalid IDs.
          */
         let mut sum = 0;
-        for i in self.min..self.max + 1 {
+        for i in self.min..=self.max {
             let str_i = i.to_string();
             let (lhs, rhs) = str_i.split_at(str_i.len() / 2);
             if lhs == rhs {
@@ -41,15 +39,25 @@ impl Range {
          * and 1111111 (1 seven times) are all invalid IDs.
          */
         let mut sum = 0;
-        for i in self.min..self.max + 1 {
+        println!("Processing range: {}-{}", self.min, self.max);
+        'outer: for i in self.min..=self.max {
             let str_i = i.to_string();
-            let max_mask_size = str_i.len() / 2;
-            for j in 0..max_mask_size + 1 {
-                let (lhs, rhs) = str_i.split_at(j);
-                if lhs == rhs {
-                    sum += i;
+            println!("i={}", str_i);
+            for mask_size in 1..=str_i.len() / 2 {
+                let lhs = &str_i[0..mask_size];
+                println!("lhs={}", lhs);
+                for splits in 1..=str_i.len() / mask_size {
+                    println!("splits {}", splits);
+                    let rhs = &str_i[mask_size * splits..mask_size * splits + 1];
+                    println!("rhs={}", rhs);
+                    if lhs != rhs {
+                        break;
+                    }
+                    // let mut rhs = &str_i[mask_size * splits..mask_size * splits + 1];
+                    // println!("{}|{}", lhs, rhs);
                 }
             }
+            break;
         }
         sum
     }
@@ -67,6 +75,7 @@ pub fn solution() {
             let mut range = Range::new(start, end);
             sum += range.sum_invalid_ids();
             other_sum += range.sum_more_invalid_ids();
+            break;
         }
     }
     println!("Total sum {}", sum);
