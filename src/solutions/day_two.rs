@@ -1,4 +1,4 @@
-use core::str;
+use std::cmp::min;
 
 use crate::utils::parse_input;
 
@@ -39,25 +39,28 @@ impl Range {
          * and 1111111 (1 seven times) are all invalid IDs.
          */
         let mut sum = 0;
-        println!("Processing range: {}-{}", self.min, self.max);
-        'outer: for i in self.min..=self.max {
+        let mut is_invalid: bool;
+        for i in self.min..=self.max {
             let str_i = i.to_string();
-            println!("i={}", str_i);
+            println!("i = {}", str_i);
             for mask_size in 1..=str_i.len() / 2 {
+                is_invalid = true;
                 let lhs = &str_i[0..mask_size];
-                println!("lhs={}", lhs);
                 for splits in 1..=str_i.len() / mask_size {
-                    println!("splits {}", splits);
-                    let rhs = &str_i[mask_size * splits..mask_size * splits + 1];
-                    println!("rhs={}", rhs);
+                    let end = min(mask_size * splits + mask_size, str_i.len());
+                    let rhs = &str_i[mask_size * splits..end];
+                    println!("{}|{}", lhs, rhs);
                     if lhs != rhs {
+                        is_invalid = false;
                         break;
                     }
-                    // let mut rhs = &str_i[mask_size * splits..mask_size * splits + 1];
-                    // println!("{}|{}", lhs, rhs);
+                }
+                if is_invalid {
+                    panic!("Invalid id {}", str_i);
+                    sum += i;
+                    break;
                 }
             }
-            break;
         }
         sum
     }
@@ -75,7 +78,6 @@ pub fn solution() {
             let mut range = Range::new(start, end);
             sum += range.sum_invalid_ids();
             other_sum += range.sum_more_invalid_ids();
-            break;
         }
     }
     println!("Total sum {}", sum);
