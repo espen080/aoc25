@@ -2,7 +2,7 @@ mod solutions;
 mod utils;
 
 // use crate::solutions::day_one::solution;
-use crate::solutions::day_two::solution;
+use crate::solutions::day_three::solution;
 
 fn main() {
     solution();
