@@ -1,19 +1,18 @@
 use crate::utils::parse_input;
-use std::simd::u8x64;
+use std::simd::{prelude::SimdPartialEq, u8x64};
 
 const NINES_MASK: u8x64 = u8x64::splat(b'9');
 
 fn parse_line(line: &str) -> u8 {
     let lhs = &line[..line.len() / 2];
-    assert!(lhs.len() < 64);
-    let lhs_mask: u8x64 = u8x64::load_or_default(lhs.as_bytes());
-    println!("lhs mask {:?}", lhs_mask);
-    println!("nines mask {:?}", NINES_MASK);
-    let res = lhs_mask & NINES_MASK;
-    println!("res {:?}", res);
     let rhs = &line[line.len() / 2..];
-    assert!(rhs.len() < 64);
-    0
+    for i in 9..0 {
+        println!("{}", i);
+    }
+    let lhs_mask: u8x64 = u8x64::load_or_default(lhs.as_bytes());
+    let res = lhs_mask.simd_eq(NINES_MASK);
+    let count = res.to_bitmask().count_ones() as u8;
+    count
 }
 
 pub fn solution() {
@@ -31,6 +30,6 @@ mod tests {
     use super::*;
     #[test]
     fn test_parse() {
-        assert_eq!(parse_line("123456789"), 17);
+        assert_eq!(parse_line("193456789"), 17);
     }
 }
